@@ -1,15 +1,10 @@
 package text;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Created by nikolay.mikutskiy
  * Date: 30.06.2021
  */
 public class AnswerUtil {
-    Logger logger = LoggerFactory.getLogger(AnswerUtil.class);
-
 
     public AnswerResult parseAnswer(String text) {
         if (isPositiveAnswer(text.trim())) return AnswerResult.YES;

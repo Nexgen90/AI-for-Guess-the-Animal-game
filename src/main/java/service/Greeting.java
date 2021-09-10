@@ -1,7 +1,6 @@
 package service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalTime;
 
@@ -9,12 +8,12 @@ import java.time.LocalTime;
  * Created by nikolay.mikutskiy
  * Date: 29.06.2021
  */
+@Slf4j
 public class Greeting {
-    Logger logger = LoggerFactory.getLogger(Greeting.class);
 
     public String getTimeBasedGreeting(LocalTime time) {
         int currentHour = time.getHour();
-        logger.info("time.getHour() = {}", currentHour);
+        log.debug("time.getHour() = {}", currentHour);
         return getGreetingStartWord(currentHour);
     }
 

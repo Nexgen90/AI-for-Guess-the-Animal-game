@@ -1,7 +1,6 @@
 package text;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -10,8 +9,8 @@ import java.util.stream.Collectors;
  * Created by nikolay.mikutskiy
  * Date: 30.06.2021
  */
-public class TextUtil {
-    Logger logger = LoggerFactory.getLogger(TextUtil.class);
+@Slf4j
+public class NameUtil {
 
     public String getFixedArticle(String text) {
         String[] wordWithArticle = text.trim().split(" ");
@@ -31,7 +30,7 @@ public class TextUtil {
 
         String animalNameWithoutArticle = Arrays.stream(wordWithArticle)
                 .skip(1).collect(Collectors.joining(" "));
-        logger.info("word <{}> with article <{}>", animalNameWithoutArticle, wordWithArticle[0]);
+        log.debug("word <{}> with article <{}>", animalNameWithoutArticle, wordWithArticle[0]);
 
         String exception = getArticleIfWordInExceptionList(animalNameWithoutArticle);
         if (exception != null) {
@@ -61,10 +60,10 @@ public class TextUtil {
 
     private boolean isVowel(char ch) {
         if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
-            logger.info("{} is vowel", ch);
+            log.debug("{} is vowel", ch);
             return true;
         } else {
-            logger.info("{} is consonant", ch);
+            log.debug("{} is consonant", ch);
             return false;
         }
     }

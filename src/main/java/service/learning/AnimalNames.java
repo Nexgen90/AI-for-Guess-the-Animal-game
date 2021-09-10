@@ -5,7 +5,7 @@ import service.Farewell;
 import service.Greeting;
 import text.AnswerResult;
 import text.AnswerUtil;
-import text.TextUtil;
+import text.NameUtil;
 import validator.AnimalInputValidator;
 
 import java.io.BufferedReader;
@@ -23,18 +23,18 @@ import static text.AnswerResult.YES;
 public class AnimalNames {
     private final Greeting greeting;
     private final BufferedReader reader;
-    private final TextUtil textUtil;
+    private final NameUtil nameUtil;
     private final AnswerUtil answerUtil;
     private final AnimalInputValidator validator;
     private final Clarification clarification;
     private final Farewell farewell;
 
-    public AnimalNames(Greeting greeting, BufferedReader reader, TextUtil textUtil,
+    public AnimalNames(Greeting greeting, BufferedReader reader, NameUtil nameUtil,
                        AnswerUtil answerUtil, AnimalInputValidator validator,
                        Clarification clarification, Farewell farewell) {
         this.greeting = greeting;
         this.reader = reader;
-        this.textUtil = textUtil;
+        this.nameUtil = nameUtil;
         this.answerUtil = answerUtil;
         this.validator = validator;
         this.clarification = clarification;
@@ -55,8 +55,8 @@ public class AnimalNames {
                 System.out.println(animal + " is incorrect animal name");
                 continue;
             }
-            String article = textUtil.getFixedArticle(animal);
-            String name = textUtil.getNameWithoutArticle(animal);
+            String article = nameUtil.getFixedArticle(animal);
+            String name = nameUtil.getNameWithoutArticle(animal);
             System.out.println("Is it " + article + " " + name + "?");
 
             boolean isAnswerFinished = false;

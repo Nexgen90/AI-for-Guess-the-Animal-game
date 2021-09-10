@@ -1,7 +1,7 @@
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import text.TextUtil;
+import text.NameUtil;
 
 import java.util.stream.Stream;
 
@@ -12,14 +12,14 @@ import static org.hamcrest.Matchers.is;
  * Created by nikolay.mikutskiy
  * Date: 30.06.2021
  */
-public class TextUtilTest {
-    private TextUtil textUtil = new TextUtil();
+public class NameUtilTest {
+    private NameUtil nameUtil = new NameUtil();
 
 
     @ParameterizedTest
     @MethodSource("articles")
     void shouldChooseCorrectArticle(String inputtedAnimal, String expectedArticle) {
-        assertThat(textUtil.getFixedArticle(inputtedAnimal), is(expectedArticle));
+        assertThat(nameUtil.getFixedArticle(inputtedAnimal), is(expectedArticle));
     }
 
     static Stream<Arguments> articles() {
@@ -40,7 +40,7 @@ public class TextUtilTest {
     @ParameterizedTest
     @MethodSource("animal")
     void shouldChooseCorrectName(String inputtedAnimal, String expectedName) {
-        assertThat(textUtil.getNameWithoutArticle(inputtedAnimal), is(expectedName));
+        assertThat(nameUtil.getNameWithoutArticle(inputtedAnimal), is(expectedName));
     }
 
     static Stream<Arguments> animal() {

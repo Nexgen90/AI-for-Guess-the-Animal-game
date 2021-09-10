@@ -1,11 +1,12 @@
 import service.Clarification;
 import service.Farewell;
 import service.Greeting;
-import service.learning.Animal;
-import service.learning.AnimalFact;
+import service.dto.Animal;
+import service.dto.AnimalFact;
 import text.AnswerResult;
 import text.AnswerUtil;
-import text.TextUtil;
+import text.FactUtil;
+import text.NameUtil;
 import validator.AnimalInputValidator;
 import validator.DistinguishesValidator;
 
@@ -19,40 +20,38 @@ import java.util.concurrent.ThreadLocalRandom;
  * Date: 29.06.2021
  */
 public class Main {
+
     public static void main(String[] args) throws IOException {
         Greeting greeting = new Greeting();
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        TextUtil textUtil = new TextUtil();
+        NameUtil nameUtil = new NameUtil();
         AnswerUtil answerUtil = new AnswerUtil();
         AnimalInputValidator validator = new AnimalInputValidator();
         Clarification clarification = new Clarification(ThreadLocalRandom.current());
         Farewell farewell = new Farewell(ThreadLocalRandom.current());
         DistinguishesValidator distinguishesValidator = new DistinguishesValidator();
+        FactUtil factUtil = new FactUtil();
 
         Animal firstAnimal = null;
         Animal secondAnimal = null;
 
 
         while (firstAnimal == null) {
-            System.out.println("Enter the first animal:");
-            System.out.print("> ");
-            String input = reader.readLine();
+            String input = getUserInput("Enter the first animal:", reader);
             if (!validator.isValid(input)) {
                 System.out.println("Invalid animal name!");
                 continue;
             }
-            firstAnimal = new Animal(textUtil.getFixedArticle(input), textUtil.getNameWithoutArticle(input));
+            firstAnimal = new Animal(nameUtil.getFixedArticle(input), nameUtil.getNameWithoutArticle(input));
         }
 
         while (secondAnimal == null) {
-            System.out.println("Enter the second animal:");
-            System.out.print("> ");
-            String input = reader.readLine();
+            String input = getUserInput("Enter the second animal:", reader);
             if (!validator.isValid(input)) {
                 System.out.println("Invalid animal name!");
                 continue;
             }
-            secondAnimal = new Animal(textUtil.getFixedArticle(input), textUtil.getNameWithoutArticle(input));
+            secondAnimal = new Animal(nameUtil.getFixedArticle(input), nameUtil.getNameWithoutArticle(input));
         }
 
         AnimalFact animalFact = new AnimalFact(firstAnimal, secondAnimal);
@@ -61,9 +60,7 @@ public class Main {
         while (distinguish == null) {
             String question = String.format("Specify a fact that distinguishes %s from %s.\n",
                     firstAnimal, secondAnimal);
-            System.out.println(question + "The sentence should be of the format: 'It can/has/is ...'.");
-            System.out.print("> ");
-            String input = reader.readLine();
+            String input = getUserInput(question + "The sentence should be of the format: 'It can/has/is ...'.", reader);
             if (!distinguishesValidator.isValid(input)) {
                 System.out.println("The examples of a statement:\n" +
                         " - It can fly\n" +
@@ -78,8 +75,7 @@ public class Main {
 
         AnswerResult answerResult = null;
         while (answerResult == null) {
-            System.out.print("> ");
-            String input = reader.readLine();
+            String input = getUserInput(null, reader);
 
             AnswerResult inputtedAnswer = answerUtil.parseAnswer(input);
             if (inputtedAnswer == AnswerResult.UNKNOWN) {
@@ -90,24 +86,15 @@ public class Main {
         }
 
         if (answerResult == AnswerResult.NO) {
-            String fact = "The " + firstAnimal.getName() + " " + distinguish.substring(3);
-            animalFact.setFirstAnimalStatement(fact);
-            String fact2 = "The " + secondAnimal.getName() + " not " + distinguish.substring(3);
-            animalFact.setSecondAnimalStatement(fact2);
+            animalFact.setFirstAnimalStatement(factUtil.makePositiveStatement(distinguish, firstAnimal.getName()));
+            animalFact.setSecondAnimalStatement(factUtil.makeNegativeStatement(distinguish, secondAnimal.getName()));
         } else {
-            String fact = "The " + secondAnimal.getName() + " " + distinguish.substring(3);
-            animalFact.setSecondAnimalStatement(fact);
-            String fact2 = "The " + firstAnimal.getName() + " not " + distinguish.substring(3);
-            animalFact.setFirstAnimalStatement(fact2);
+            animalFact.setSecondAnimalStatement(factUtil.makePositiveStatement(distinguish, secondAnimal.getName()));
+            animalFact.setFirstAnimalStatement(factUtil.makeNegativeStatement(distinguish, firstAnimal.getName()));
         }
-        animalFact.setQuestionToDistinct(distinguish + "?");
 
-        //> It is a mammal
-        //I learned the following facts about animals:
-        // - The cat is a mammal.
-        // - The shark isn't a mammal.
-        //I can distinguish these animals by asking the question:
-        // - Is it a mammal?
+        animalFact.setQuestionToDistinct(factUtil.makeQuestionFromFact(distinguish));
+
         System.out.println("I learned the following facts about animals:");
         System.out.println(" - " + animalFact.getFirstAnimalStatement());
         System.out.println(" - " + animalFact.getSecondAnimalStatement());
@@ -115,7 +102,15 @@ public class Main {
         System.out.println("I can distinguish these animals by asking the question:");
         System.out.println(" - " + animalFact.getQuestionToDistinct());
 
+        System.out.println("\n" + farewell.getGoodbyeString());
 
+    }
 
+    private static String getUserInput(String text, BufferedReader reader) throws IOException {
+        if (text != null && !text.isBlank()) {
+            System.out.println(text);
+        }
+        System.out.print("> ");
+        return reader.readLine();
     }
 }
